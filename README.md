@@ -20,10 +20,11 @@ backgroundFunc = func() error {
   return nil
 }
 
+retErr := goWithRecovery(ctx, backgroundFunc, timeout)
+
+// or return a value
 backgroundFuncWithResult = func() (interface{}, error) {
 }
-
-goWithRecovery(ctx, backgroundFunc, timeout)
 ```
 
 ## Parent goroutine can control child goroutine
