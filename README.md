@@ -2,13 +2,15 @@
 2 important requirements which impact the design a lot
 
 ## Half sync and half async. 
-This is important when calling from external. For example: In STG, a receivable creation request can get all context to help engineer what is going on, but In production, if there are too many data, the endpoint can't wait infinitely, but return a requestID to let engineer check the Kibana log.
+This is important for request processing. 
+For example: In STG, the workload is small, a receivable creation request can be done with seconds, to return the result in response is very friendly to the engineer.
+But in production, the data is big, it will takes over 1 hours sometimes, the endpoint can't wait infinitely, alternative return a requestID in response and let the engineer to check the Kibana log.
 
 ### Parent goroutine need to know all the details of child goroutine
-* The child goroutine returned an error, parent goroutine can return an resonable error
-* The child is running in Async mode, can tell caller, this request become an async call, can check Kibana log for detail
+* The child goroutine returned an error, parent goroutine can return an reasonable error
+* There is a panic in child goroutine, the parent goroutine can catch it and return an error
+* The child can run in Async mode after the wait for some time, then this request become an async call, return the requestID
 * The parent goroutine is canceled by synchronize control
-* There is a panic
 
 the API design should be closure return an error, or even more data
 ```
